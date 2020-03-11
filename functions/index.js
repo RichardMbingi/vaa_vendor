@@ -10,22 +10,29 @@ exports.helloWorld = functions.https.onRequest((request, response) => {
 });
 
 app.get('/items', (req, res) => {
-    admin.firestore().collection('items').get()
+    admin.firestore().collection('items')
+        .orderBy('createdAt', 'desc')
+        .get()
         .then(data => {
             let items = [];
             data.forEach(doc => {
-                items.push(doc.data());
+                items.push({
+                    itemId: doc.id,
+                    body: doc.data().body,
+                    userHandle: doc.data().userHandle,
+                    createdAt: doc.data().createdAt,
+                });
             });
             return res.json(items);
         })
         .catch(err => console.error(err));
 })
 
-app.post('/item',(req, res) => {
+app.post('/item', (req, res) => {
     const newItem = {
         body: req.body.body,
         userHandle: req.body.userHandle,
-        createdAt: admin.firestore.Timestamp.fromDate(new Date())
+        createdAt: new Date().toISOString()
     };
 
     admin.firestore()
@@ -44,4 +51,4 @@ app.post('/item',(req, res) => {
         })
 });
 
-exports.api = functions.https.onRequest(app);
+exports.api = functions.region('europe-west1').https.onRequest(app);
