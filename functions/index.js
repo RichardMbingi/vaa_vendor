@@ -6,7 +6,7 @@ const FBAuth = require('./util/fbAuth');
 
 const { getAllItems, postOneItem } = require('./handlers/items');
 const { signup, login, uploadImage, addUserDetails} = require('./handlers/users');
-const { vsignup } = require('./handlers/vendors');
+const { vsignup, vlogin } = require('./handlers/vendors');
 
 //?Item routes
 app.get('/items', getAllItems);
@@ -20,6 +20,7 @@ app.post('/user', FBAuth, addUserDetails);
 
 //?Vendor routes
 app.post('/vsignup', vsignup);
+app.post('/vlogin', vlogin);
 
 exports.api = functions.region('europe-west1').https.onRequest(app);
 
